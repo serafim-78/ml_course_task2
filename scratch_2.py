@@ -13,25 +13,18 @@ print "Task #5: correlation of SibSp and Parch"
 print data.loc[:, ['SibSp', 'Parch']].corr()
 print "Task #6: most popular female name"
 fn=pd.DataFrame(columns=['Name'])
-name=data[data['Sex']=='female'].loc[:,'Name'][798]
-if name.find('(')!=-1:
-    name=name[name.find('(')+1:name.find(' ',name.find('('))]
-else:
-    name = name[name.find('.') + 2:name.find('\n', name.find('.') + 2)+1]
-print name
 for i in range(0, data.shape[0]):
     try:
         name=data[data['Sex']=='female'].loc[:,'Name'][i]
     except:
         continue
-    name=re.search("\\(.*\\)", name)
-    if name is not None:
-        print name.group(0)
-    """
     if name.find('(') != -1:
         name = name[name.find('(') + 1:name.find(' ', name.find('('))]
     else:
-        name = name[name.find('.') + 2:name.find(' ', name.find('.') + 2)+1]
-        """
+        name = name[name.find('.') + 2:len(name)]
+        if name.find(' ') != -1:
+            name = name[0:name.find(' ')]
     fn = fn.append(pd.DataFrame({'Name': name}, index=[0]), ignore_index=True)
-print fn
+fn=fn.groupby(['Name'])['Name'].count()
+fn=fn.sort_values(ascending=False)
+print fn.keys()[0]
